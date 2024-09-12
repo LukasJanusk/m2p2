@@ -45,7 +45,7 @@ function fixPoem(poem) {
   return fixed.slice(0, 100);
 }
 //returns list of poem lines converted to html paragraphs
-export function createParagraphs(poem) {
+function createParagraphs(poem) {
   const paragraphs = [];
   for (let line of poem) {
     const p = document.createElement("p");
@@ -63,12 +63,12 @@ export function hideParagraphs(paragraphs, numberToShow) {
   });
   return showingElements.concat(hiddenElements);
 }
-//gets poem from API and converts it for later use to list of strings(lines)
+//gets poem from API and converts it paragraphs DOMElements
 export async function preparePoem() {
   const author = getAuthor();
   const poems = await getPoems(author);
   const longPoems = extractText(poems);
   const poem = pickRandom(longPoems);
   const prepared = fixPoem(poem);
-  return prepared;
+  return createParagraphs(prepared);
 }

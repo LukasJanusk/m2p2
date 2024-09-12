@@ -40,15 +40,15 @@ footer {
   font-size: 30px;
 }
 #text-field {
+  width: auto;
   min-height: 300px;
-  font-size: 30px;
+  font-size: 25px;
   border-radius: 1rem;
   border: 1px solid gray;
   background-color: white;
   text-align: center;
   margin-left: 20vw;
   margin-right: 20vw;
-  padding: 15px;
 }
 button {
   border-radius: 1rem;
@@ -62,4 +62,14 @@ button {
 #toggles img {
   max-width: 15px;
   max-height: 15px;
+}
+#correct {
+  background-color: rgb(171, 213, 171);
+}
+#incorrect {
+  background-color: rgb(219, 144, 144);
+}
+#current {
+  background-color: gainsboro;
+  text-decoration: underline;
 }
