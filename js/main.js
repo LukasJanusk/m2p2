@@ -14,7 +14,7 @@ async function handleLoading() {
     });
 
     document.addEventListener("keydown", (event) => {
-      inputController.handleKeyPress(event.key);
+      inputController.handleKeyPress(event.key, true);
     });
   });
 }

@@ -63,13 +63,28 @@ button {
   max-width: 15px;
   max-height: 15px;
 }
-#correct {
+@keyframes color-change {
+  0% {
+    background-color: rgb(152, 150, 150);
+  }
+  50% {
+    background-color: rgb(218, 218, 218);
+  }
+  100% {
+    background-color: rgb(152, 150, 150);
+  }
+}
+.current-word {
+  background-color: rgb(218, 218, 218);
+}
+.correct {
   background-color: rgb(171, 213, 171);
 }
-#incorrect {
+.incorrect {
   background-color: rgb(219, 144, 144);
 }
-#current {
-  background-color: gainsboro;
+.current {
   text-decoration: underline;
+  text-decoration-thickness: 2px;
+  animation: color-change 2s ease-in-out infinite;
 }

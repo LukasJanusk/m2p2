@@ -10,20 +10,23 @@ export class InputController {
     this.incorrectWords = [];
     this.timer = timer;
     this.index = 0;
+    this.paragraphEnd = false;
     this.renderer = new Renderer();
     this.engine = new Engine();
     this.initializeParagraphs();
   }
+  //Initializes paragraphs for the logic checks and render
   initializeParagraphs() {
     this.paragraphs.forEach((paragraph) => {
       this.wrapEachCharacterInSpan(paragraph);
     });
     this.initializeFirstSpan();
+    this.renderer.highlightCurrentWord(this.currentParagraph);
   }
-  //highlights initial letter of new paragraph
+  //highlights first letter of new paragraph
   initializeFirstSpan() {
     const firstSpan = this.currentParagraph.querySelector("span");
-    firstSpan.id = "current";
+    firstSpan.className = "current";
   }
   // For each character of string creates a <span>
   wrapEachCharacterInSpan(paragraph) {
@@ -33,46 +36,61 @@ export class InputController {
       .join("");
     paragraph.innerHTML = wrappedText;
   }
+  getCompletedParagraphs() {
+    return this.paragraphs.slice(0, this.index + 1);
+  }
+  handleEnter() {
+    this.index++;
+    this.renderer.hideParagraph(this.currentParagraph);
+    this.renderer.unhideNthParagraph(10 + this.index, this.paragraphs);
+    this.currentParagraph = this.paragraphs[this.index];
+    this.initializeFirstSpan();
+    this.paragraphEnd = false;
+  }
   //Handles keypress logic
-  handleKeyPress(key) {
+  handleKeyPress(key, lineAutoComplete = false) {
     console.log(`Key pressed: ${key}`);
-    if (this.paragraphs === null) {
-      this.remianingText = this.currentParagraph.innerText;
-    }
-    if (key === "Enter") {
-      handleEnter();
+    if (
+      this.paragraphEnd === true &&
+      lineAutoComplete === false &&
+      key !== "Enter" &&
+      key !== "Backspace"
+    ) {
+      // Show message for the user
+      console.log("Press Enter or Backspace at line end!");
+      return;
+    } else if (key === "Backspace") {
+      if ((this.paragraphEnd = true)) {
+        this.paragraphEnd = false;
+      }
+      if (
+        !this.renderer.handleBackspace(this.currentParagraph, this.paragraphs)
+      ) {
+        this.index--;
+        this.paragraphEnd = false;
+        this.currentParagraph = this.paragraphs[this.index];
+      }
+    } else if (this.paragraphEnd && !lineAutoComplete) {
+      if (key === "Enter") {
+        this.handleEnter();
+      }
     } else if (key === "Escape") {
       handleEscape();
-    } else if (key === "Backspace") {
-      handleBackspace(this.currentParagraph);
-      if (this.index > 0) {
-        this.index--;
-      }
     } else if (key !== "Shift") {
       this.renderer.renderLetter(key, this.currentParagraph);
-      this.index++;
-      if (this.engine.checkForParagraphEnd(this.currentParagraph)) {
-        console.log("paragraph end reached");
-        this.index = 0;
+      this.paragraphEnd = this.engine.checkForParagraphEnd(
+        this.currentParagraph
+      );
+      if (this.paragraphEnd && lineAutoComplete) {
+        this.handleEnter();
         //run correct word logic
-        this.currentParagraph.remove();
-        this.paragraphs.shift();
-        console.log("paragraph deleted now");
-        this.unhideParagraph(10);
-        this.currentParagraph = this.paragraphs[0];
-        this.initializeFirstSpan();
       }
+      this.renderer.highlightCurrentWord(this.currentParagraph);
+      console.log(
+        `Word accuracy: ${this.engine.calculateCorrectWords(
+          this.paragraphs.slice(0, this.index + 1)
+        )}%`
+      );
     }
-  }
-  unhideParagraph(n) {
-    if (this.paragraphs.length >= n) {
-      const tenthParagraph = this.paragraphs[n - 1];
-      tenthParagraph.style.display = "";
-    } else {
-      console.log(`Less than ${n} paragraphs available.`);
-    }
-  }
-  updateText(key, paragraph) {
-    const topParagraph = paragraphs[0];
   }
 }
