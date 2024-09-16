@@ -67,4 +67,18 @@ export class Engine {
     const wordsToCheck = this.removeUnusedWords(spansWords);
     return this.getCorrectWordsPercentage(wordsToCheck);
   }
+  // calculates number of correctly typed words
+  getCorrectWords(paragraphs) {
+    const totalParagraphs = Array.from(paragraphs);
+    const spansWords = [];
+    totalParagraphs.forEach((paragraph) => {
+      const paragraphWordSpans = this.createWordsArrayfromSpans(paragraph);
+      spansWords.push(...paragraphWordSpans);
+    });
+    const wordsToCheck = this.removeUnusedWords(spansWords);
+    const correctWordsArray = wordsToCheck.filter((spans) =>
+      spans.every((span) => span.classList.contains("correct"))
+    );
+    return correctWordsArray.length;
+  }
 }

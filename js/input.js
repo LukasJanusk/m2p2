@@ -1,5 +1,6 @@
 import { Renderer } from "./render.js";
 import { Engine } from "./logic.js";
+import { preparePoem } from "./api.js";
 
 export class InputController {
   constructor(timer, paragraphs) {
@@ -15,7 +16,7 @@ export class InputController {
     this.engine = new Engine();
     this.initializeParagraphs();
   }
-  //Initializes paragraphs for the logic checks and render
+  // Initializes paragraphs for the logic checks and render
   initializeParagraphs() {
     this.paragraphs.forEach((paragraph) => {
       this.wrapEachCharacterInSpan(paragraph);
@@ -23,7 +24,7 @@ export class InputController {
     this.initializeFirstSpan();
     this.renderer.highlightCurrentWord(this.currentParagraph);
   }
-  //highlights first letter of new paragraph
+  // Highlights first letter of new paragraph
   initializeFirstSpan() {
     const firstSpan = this.currentParagraph.querySelector("span");
     firstSpan.className = "current";
@@ -36,9 +37,11 @@ export class InputController {
       .join("");
     paragraph.innerHTML = wrappedText;
   }
+  // Returns paragraphs which have beed started
   getCompletedParagraphs() {
     return this.paragraphs.slice(0, this.index + 1);
   }
+  // Runs logic and render when enter is pressed
   handleEnter() {
     this.index++;
     this.renderer.hideParagraph(this.currentParagraph);
@@ -47,8 +50,67 @@ export class InputController {
     this.initializeFirstSpan();
     this.paragraphEnd = false;
   }
-  //Handles keypress logic
-  handleKeyPress(key, lineAutoComplete = false) {
+  // Restarts current text test
+  restart() {
+    this.index = 0;
+    this.paragraphs.forEach((paragraph, i) => {
+      paragraph.className = "";
+      paragraph.style.display = "none";
+      const spans = paragraph.querySelectorAll("span");
+      spans.forEach((span) => {
+        span.className = "";
+      });
+      if (i < 10) {
+        paragraph.style.display = "";
+      }
+    });
+    this.currentParagraph = this.paragraphs[this.index];
+    this.initializeFirstSpan();
+    this.renderer.highlightCurrentWord(this.currentParagraph);
+    this.timer.reset();
+    //Reset user curent stats logic here?
+  }
+  // Gets new poem text and restarts
+  async reset(textField) {
+    // this.paragraphs = null;
+    // this.currentParagraph = null;
+    textField.innerHTML = `<input id="hidden-input" autofocus />Loading new poem...`;
+    this.paragraphs = await preparePoem();
+    textField.innerHTML = "";
+    this.currentParagraph = this.paragraphs[0];
+    this.paragraphs.forEach((paragraph) => {
+      textField.appendChild(paragraph);
+    });
+    this.initializeParagraphs();
+    this.restart();
+  }
+  async handleAccuracy(DomElement) {
+    let accuracy = this.engine.calculateCorrectWords(
+      this.paragraphs.slice(0, this.index + 1)
+    );
+    if (accuracy === NaN) {
+      accuracy = 0;
+    }
+    this.renderer.renderAccuracy(DomElement, accuracy);
+  }
+  handleWpm(DomElement) {
+    setInterval(() => {
+      const correctWords = this.engine.getCorrectWords(this.paragraphs);
+      const wpm =
+        (correctWords / (this.timer.duration - this.timer.remainingTime)) *
+        this.timer.duration;
+
+      this.renderer.renderWpm(DomElement, wpm);
+    }, 500);
+  }
+  // Handles keypress logic
+  async handleKeyPress(key, textField, lineAutoComplete = false) {
+    if (this.paragraphs === null || this.currentParagraph === null) {
+      return;
+    }
+    if (key !== "Shift" && !this.timer.end) {
+      this.timer.start();
+    }
     console.log(`Key pressed: ${key}`);
     if (
       this.paragraphEnd === true &&
@@ -59,8 +121,8 @@ export class InputController {
       // Show message for the user
       console.log("Press Enter or Backspace at line end!");
       return;
-    } else if (key === "Backspace") {
-      if ((this.paragraphEnd = true)) {
+    } else if (key === "Backspace" && !this.timer.end) {
+      if (this.paragraphEnd === true) {
         this.paragraphEnd = false;
       }
       if (
@@ -70,13 +132,14 @@ export class InputController {
         this.paragraphEnd = false;
         this.currentParagraph = this.paragraphs[this.index];
       }
-    } else if (this.paragraphEnd && !lineAutoComplete) {
-      if (key === "Enter") {
-        this.handleEnter();
-      }
-    } else if (key === "Escape") {
-      handleEscape();
-    } else if (key !== "Shift") {
+    } else if (key === "Enter" && this.timer.end) {
+      this.restart();
+      this.timer.end = false;
+    } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
+      this.handleEnter();
+    } else if (key === "Escape" && this.timer.end) {
+      await this.reset(textField);
+    } else if (key !== "Shift" && this.timer.running && !this.timer.end) {
       this.renderer.renderLetter(key, this.currentParagraph);
       this.paragraphEnd = this.engine.checkForParagraphEnd(
         this.currentParagraph
@@ -92,5 +155,9 @@ export class InputController {
         )}%`
       );
     }
+    this.renderer.highlightCurrentWord(this.currentParagraph);
+  }
+  focusInput(DOMInputField) {
+    DOMInputField.focus();
   }
 }

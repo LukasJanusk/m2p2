@@ -68,7 +68,7 @@ button {
     background-color: rgb(152, 150, 150);
   }
   50% {
-    background-color: rgb(218, 218, 218);
+    background-color: rgb(201, 200, 200);
   }
   100% {
     background-color: rgb(152, 150, 150);
@@ -87,4 +87,9 @@ button {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   animation: color-change 2s ease-in-out infinite;
+}
+#hidden-input {
+  opacity: 0;
+  position: absolute;
+  left: -9999px;
 }

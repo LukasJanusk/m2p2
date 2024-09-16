@@ -37,8 +37,10 @@ function extractText(data) {
 function fixPoem(poem) {
   const fixed = [];
   poem.forEach((line) => {
-    const trimmed = line.trim();
+    let trimmed = line.trim();
     if (trimmed.length > 1) {
+      trimmed = trimmed.replace(/'|\u2019|\u2018/g, "'");
+      trimmed = trimmed.replace(/[—–]/g, "-");
       fixed.push(trimmed);
     }
   });

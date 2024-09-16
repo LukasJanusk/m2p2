@@ -50,6 +50,20 @@ export class Renderer {
       return false;
     }
   }
+  // updates innerHTML with current values of accuracy
+  renderAccuracy(DomElement, accuracy) {
+    if (isNaN(accuracy)) {
+      accuracy = 0;
+    }
+    DomElement.innerText = `Accuracy: ${accuracy}%`;
+  }
+  // updates innerHTML with current values
+  renderWpm(DomElement, wpm) {
+    if (isNaN(wpm)) {
+      wpm = 0;
+    }
+    DomElement.innerHTML = `WPM = ${wpm.toFixed(0)}`;
+  }
   //un-hides nth paragraph
   unhideNthParagraph(n, paragraphs) {
     if (paragraphs.length >= n) {
@@ -101,6 +115,10 @@ export class Renderer {
         spans[i].className = "current-word";
       }
     }
+    const toReset = spans.slice(end + 1);
+    toReset.forEach((span) => {
+      span.className = "";
+    });
     spans[currentSpanIndex].className = "current";
   }
 }
