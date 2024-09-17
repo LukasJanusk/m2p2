@@ -1,17 +1,16 @@
-// const fs = require("fs");
-// chooses random element from array
+// Chooses random element from array
 function pickRandom(items) {
   const randomIndex = Math.floor(Math.random() * items.length);
   const randomItem = items[randomIndex];
   return randomItem;
 }
-// returns one of 3 randomly selected author
+// Returns one of 3 randomly selected author
 function getAuthor() {
   const authors = ["William Shakespeare", "John Keats"];
   const selectedAuthor = pickRandom(authors);
   return selectedAuthor;
 }
-//requests API for poems of specific author
+// Requests API for poems of specific author
 async function getPoems(author) {
   try {
     const response = await fetch(
@@ -23,7 +22,7 @@ async function getPoems(author) {
     console.error("Error fetching data:", error);
   }
 }
-//returns poems list with each peom containing at least 100 lines
+// Returns poems list with each peom containing at least 100 lines
 function getLongPoems(data) {
   const poems = [];
   data.forEach((poem) => {
@@ -33,11 +32,11 @@ function getLongPoems(data) {
   });
   return poems;
 }
-//fixes all poems fetched from API
+// Fixes all poems fetched from API
 function fixPoems(poems) {
   return poems.map(fixPoem);
 }
-//trims spaces on both sides and removes 1 symbol lines
+// Trims spaces on both sides and removes 1 symbol lines
 function fixPoem(poem) {
   const fixed = [];
   poem.forEach((line) => {
@@ -50,7 +49,7 @@ function fixPoem(poem) {
   });
   return fixed.slice(0, 100);
 }
-//returns list of poem lines converted to html paragraphs
+// Returns list of poem lines converted to html paragraphs
 function createParagraphs(poem) {
   const paragraphs = [];
   for (let line of poem) {
@@ -60,16 +59,29 @@ function createParagraphs(poem) {
   }
   return paragraphs;
 }
-//gets poem from API and converts it paragraphs DOMElements
-export async function preparePoem(useLocalStorage = false) {
+// Saves poems to local storage
+function savePoems(poems) {
+  const poemsString = JSON.stringify(poems);
+  localStorage.setItem("poems", poemsString);
+}
+// Gets poem from local storage
+function getLocalPoem() {
+  const storedPoemsString = localStorage.getItem("poems");
+  if (storedPoemsString) {
+    const storedPoems = JSON.parse(storedPoemsString);
+    const localPoem = pickRandom(storedPoems);
+    return localPoem;
+  } else {
+    console.error("No poems found in local storage.");
+    return null; // Handle when no poems exist
+  }
+}
+// Gets poem from API and converts it paragraphs DOMElements
+export async function preparePoem(useLocalStorage = true) {
   if (useLocalStorage) {
-    const storedPoemsString = localStorage.getItem("poems");
-    if (storedPoemsString) {
-      const storedPoems = JSON.parse(storedPoemsString);
-      const localPoem = pickRandom(storedPoems);
-      if (localPoem) {
-        return createParagraphs(localPoem);
-      }
+    const localPoem = getLocalPoem();
+    if (localPoem) {
+      return createParagraphs(localPoem);
     }
   }
   const author = getAuthor();
@@ -81,10 +93,4 @@ export async function preparePoem(useLocalStorage = false) {
   }
   const poem = pickRandom(fixedPoems);
   return createParagraphs(poem);
-}
-
-// saves poems to local storage
-function savePoems(poems) {
-  const poemsString = JSON.stringify(poems);
-  localStorage.setItem("poems", poemsString);
 }
