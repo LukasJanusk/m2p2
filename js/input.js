@@ -70,8 +70,10 @@ export class InputController {
     //Reset user curent stats logic here?
   }
   // Gets new poem text and restarts
-  async reset(textField, accuracyField) {
+  async reset(textField, accuracyField, wpmField) {
+    this.timer.reset();
     accuracyField.innerHTML = "Accuracy: 0%";
+    wpmField.innerHTML = "WPM: 0";
     textField.innerHTML = `<input id="hidden-input" autofocus /><p> Loading new poem...</p>`;
     this.paragraphs = await preparePoem();
     textField.innerHTML = `<input id="hidden-input" autofocus />`;
@@ -91,7 +93,6 @@ export class InputController {
           const correctWords = this.engine.getCorrectWords(this.paragraphs);
           const accuracy = this.engine.calculateAccuracy(this.paragraphs);
           const wpm = (correctWords / this.timer.duration) * 60;
-          console.log(`Trying to write WPM: ${wpm} \n accuracy: ${accuracy}%`);
           this.user.addWpmEntry(wpm);
           this.user.addAccuracyEntry(accuracy);
           resolve();
@@ -108,7 +109,6 @@ export class InputController {
       accuracy = 0;
     }
     this.user.accuracy = accuracy;
-    console.log(`User accuracy:${this.user.accuracy}%`);
     this.renderer.renderAccuracy(DomElement, this.user.accuracy);
   }
   // Updates WPM on set intervals
@@ -130,17 +130,19 @@ export class InputController {
     this.renderer.renderWpm(DomElement, this.user.wpm);
   }
   // Handles keypress logic
-  async handleKeyPress(key, textField, lineAutoComplete = false) {
-    console.log(
-      `correct words total = ${this.engine.getCorrectWords(this.paragraphs)}`
-    );
+  async handleKeyPress(
+    key,
+    textField,
+    accuracyField,
+    wpmField,
+    lineAutoComplete = false
+  ) {
     if (this.paragraphs === null || this.currentParagraph === null) {
       return;
     }
     if (key !== "Shift" && !this.timer.end) {
       this.timer.start();
     }
-    console.log(`Key pressed: ${key}`);
     if (
       this.paragraphEnd === true &&
       lineAutoComplete === false &&
@@ -166,7 +168,7 @@ export class InputController {
     } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
       this.handleEnter();
     } else if (key === "Escape" && this.timer.end) {
-      await this.reset(textField);
+      await this.reset(textField, accuracyField, wpmField);
     } else if (key !== "Shift" && this.timer.running && !this.timer.end) {
       this.renderer.renderLetter(key, this.currentParagraph);
       this.paragraphEnd = this.engine.checkForParagraphEnd(
@@ -177,11 +179,6 @@ export class InputController {
         //run correct word logic
       }
       this.renderer.highlightCurrentWord(this.currentParagraph);
-      console.log(
-        `Word accuracy: ${this.engine.calculateAccuracy(
-          this.paragraphs.slice(0, this.index + 1)
-        )}%`
-      );
     }
     this.renderer.highlightCurrentWord(this.currentParagraph);
   }

@@ -18,7 +18,6 @@ async function getPoems(author) {
       `https://poetrydb.org/author/${encodeURIComponent(author)}/title,lines`
     );
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -80,7 +79,6 @@ export async function preparePoem(useLocalStorage = false) {
   if (useLocalStorage) {
     savePoems(fixedPoems);
   }
-  console.log(fixedPoems);
   const poem = pickRandom(fixedPoems);
   return createParagraphs(poem);
 }

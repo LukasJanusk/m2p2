@@ -29,18 +29,24 @@ async function handleLoading() {
     document.addEventListener("keydown", (event) => {
       event.preventDefault();
       inputController.focusInput(hiddenInput);
-      inputController.handleKeyPress(event.key, textField, true);
+      inputController.handleKeyPress(
+        event.key,
+        textField,
+        accuracyField,
+        wpmField,
+        true
+      );
       inputController.handleAccuracy(accuracyField);
       inputController.handleWpm(wpmField);
     });
     resetButton.addEventListener("click", () => {
-      inputController.reset(textField, accuracyField);
+      inputController.reset(textField, accuracyField, wpmField);
     });
     inputController.checkForEnd();
     inputController.timer.renderTimer(timerDiv);
-    // if (inputController.timer.remainingTime > 0) {
-    //   inputController.updateWpm(wpmField);
-    // }
+    if (inputController.timer.remainingTime > 0) {
+      inputController.updateWpm(wpmField);
+    }
   });
 }
 handleLoading();
