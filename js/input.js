@@ -84,7 +84,7 @@ export class InputController {
     this.initializeParagraphs();
     this.restart();
   }
-  //Checks if timer is up
+  // Checks if timer is up and saves user data on time up
   async checkForEnd() {
     return new Promise((resolve) => {
       setInterval(() => {
@@ -100,7 +100,7 @@ export class InputController {
       }, 1);
     });
   }
-  // Handles Accuracy calculation and renderign
+  // Handles Accuracy calculation and rendering
   handleAccuracy(DomElement) {
     let accuracy = this.engine.calculateAccuracy(
       this.paragraphs.slice(0, this.index + 1)
@@ -117,7 +117,7 @@ export class InputController {
       this.handleWpm(DomElement);
     }, 10);
   }
-  // Handles WPM calculation and rendering of click
+  // Handles WPM calculation and rendering
   handleWpm(DomElement) {
     const correctWords = this.engine.getCorrectWords(this.paragraphs);
     let elapsedSeconds = this.timer.duration - this.timer.remainingTime;
@@ -182,6 +182,7 @@ export class InputController {
     }
     this.renderer.highlightCurrentWord(this.currentParagraph);
   }
+  // Focuses user input to hidden textfield
   focusInput(DOMInputField) {
     DOMInputField.focus();
   }

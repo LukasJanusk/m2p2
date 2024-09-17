@@ -1,6 +1,7 @@
 export class Engine {
   constructor() {}
 
+  // Returns bool if paragraph end is reached(reached = true)
   checkForParagraphEnd(paragraph) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     if (spans.length > 0) {
@@ -31,7 +32,7 @@ export class Engine {
     }
     return separatedArrays;
   }
-  // removes unused spans from array
+  // Removes unused spans from array
   removeUnusedWords(spansArray) {
     const classesToKeep = ["correct", "incorrect"];
 
@@ -41,7 +42,7 @@ export class Engine {
       )
     );
   }
-  // returns percentage of correct correct words
+  // Returns percentage of correct correct words
   getCorrectWordsPercentage(spansArray) {
     const allWords = spansArray.length;
     const correctWordsArray = spansArray.filter((spans) =>
@@ -54,7 +55,7 @@ export class Engine {
     const percentage = ((correctWords / allWords) * 100).toFixed(1);
     return percentage;
   }
-  // returns percentage of correctly input words
+  // Returns percentage of correctly input words
   calculateAccuracy(paragarphs) {
     const totalParagraphs = Array.from(paragarphs);
     const spansWords = [];
@@ -65,7 +66,7 @@ export class Engine {
     const wordsToCheck = this.removeUnusedWords(spansWords);
     return this.getCorrectWordsPercentage(wordsToCheck);
   }
-  // calculates number of correctly typed words
+  // Calculates number of correctly typed words
   getCorrectWords(paragraphs) {
     const totalParagraphs = Array.from(paragraphs);
     const spansWords = [];
