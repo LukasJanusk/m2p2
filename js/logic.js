@@ -51,13 +51,11 @@ export class Engine {
       return "0";
     }
     const correctWords = correctWordsArray.length;
-    console.log(`all words = ${allWords}`);
-    console.log(`correct words = ${correctWords}`);
     const percentage = ((correctWords / allWords) * 100).toFixed(1);
     return percentage;
   }
   // returns percentage of correctly input words
-  calculateCorrectWords(paragarphs) {
+  calculateAccuracy(paragarphs) {
     const totalParagraphs = Array.from(paragarphs);
     const spansWords = [];
     totalParagraphs.forEach((paragraph) => {

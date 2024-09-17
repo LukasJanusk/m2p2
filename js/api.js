@@ -1,3 +1,4 @@
+// const fs = require("fs");
 // chooses random element from array
 function pickRandom(items) {
   const randomIndex = Math.floor(Math.random() * items.length);
@@ -6,7 +7,7 @@ function pickRandom(items) {
 }
 // returns one of 3 randomly selected author
 function getAuthor() {
-  const authors = ["William Shakespeare", "John Keats", "Walt Whitman"];
+  const authors = ["William Shakespeare", "John Keats"];
   const selectedAuthor = pickRandom(authors);
   return selectedAuthor;
 }
@@ -24,7 +25,7 @@ async function getPoems(author) {
   }
 }
 //returns poems list with each peom containing at least 100 lines
-function extractText(data) {
+function getLongPoems(data) {
   const poems = [];
   data.forEach((poem) => {
     if (poem.lines.length > 99) {
@@ -32,6 +33,10 @@ function extractText(data) {
     }
   });
   return poems;
+}
+//fixes all poems fetched from API
+function fixPoems(poems) {
+  return poems.map(fixPoem);
 }
 //trims spaces on both sides and removes 1 symbol lines
 function fixPoem(poem) {
@@ -56,21 +61,32 @@ function createParagraphs(poem) {
   }
   return paragraphs;
 }
-//hides last n paragraphs of text-field
-export function hideParagraphs(paragraphs, numberToShow) {
-  const showingElements = Array.from(paragraphs).slice(0, numberToShow);
-  const hiddenElements = Array.from(paragraphs).slice(numberToShow);
-  hiddenElements.forEach((element) => {
-    element.style.display = "none";
-  });
-  return showingElements.concat(hiddenElements);
-}
 //gets poem from API and converts it paragraphs DOMElements
-export async function preparePoem() {
+export async function preparePoem(useLocalStorage = false) {
+  if (useLocalStorage) {
+    const storedPoemsString = localStorage.getItem("poems");
+    if (storedPoemsString) {
+      const storedPoems = JSON.parse(storedPoemsString);
+      const localPoem = pickRandom(storedPoems);
+      if (localPoem) {
+        return createParagraphs(localPoem);
+      }
+    }
+  }
   const author = getAuthor();
   const poems = await getPoems(author);
-  const longPoems = extractText(poems);
-  const poem = pickRandom(longPoems);
-  const prepared = fixPoem(poem);
-  return createParagraphs(prepared);
+  const longPoems = getLongPoems(poems);
+  const fixedPoems = fixPoems(longPoems);
+  if (useLocalStorage) {
+    savePoems(fixedPoems);
+  }
+  console.log(fixedPoems);
+  const poem = pickRandom(fixedPoems);
+  return createParagraphs(poem);
+}
+
+// saves poems to local storage
+function savePoems(poems) {
+  const poemsString = JSON.stringify(poems);
+  localStorage.setItem("poems", poemsString);
 }

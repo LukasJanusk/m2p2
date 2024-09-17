@@ -62,7 +62,7 @@ export class Renderer {
     if (isNaN(wpm)) {
       wpm = 0;
     }
-    DomElement.innerHTML = `WPM: ${wpm.toFixed(0)}`;
+    DomElement.innerHTML = `WPM: ${wpm}`;
   }
   //un-hides nth paragraph
   unhideNthParagraph(n, paragraphs) {
@@ -78,10 +78,17 @@ export class Renderer {
     paragraph.style.display = "";
     paragraph.className = "";
   }
-  //hides selected paragraph
-  hideParagraph(paragraph) {
+  //completes and hides selected paragraph
+  completeParagraph(paragraph) {
     paragraph.style.display = "none";
     paragraph.className = "completed";
+  }
+  // hide paragraphs from nth
+  hideParagraphs(n, paragraphs) {
+    const toHide = paragraphs.slice(n);
+    toHide.forEach((paragraph) => {
+      paragraph.style.display = "none";
+    });
   }
   //hihglights current word
   highlightCurrentWord(paragraph) {

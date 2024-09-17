@@ -3,13 +3,11 @@ import { Engine } from "./logic.js";
 import { preparePoem } from "./api.js";
 
 export class InputController {
-  constructor(timer, paragraphs) {
-    this.paragraphs = paragraphs;
-    this.currentParagraph = paragraphs[0];
-    this.remainingText = null;
-    this.correctWords = [];
-    this.incorrectWords = [];
+  constructor(timer, paragraphs, user) {
     this.timer = timer;
+    this.paragraphs = paragraphs;
+    this.user = user;
+    this.currentParagraph = paragraphs[0];
     this.index = 0;
     this.paragraphEnd = false;
     this.renderer = new Renderer();
@@ -23,6 +21,7 @@ export class InputController {
     });
     this.initializeFirstSpan();
     this.renderer.highlightCurrentWord(this.currentParagraph);
+    this.renderer.hideParagraphs(10, this.paragraphs);
   }
   // Highlights first letter of new paragraph
   initializeFirstSpan() {
@@ -44,7 +43,7 @@ export class InputController {
   // Runs logic and render when enter is pressed
   handleEnter() {
     this.index++;
-    this.renderer.hideParagraph(this.currentParagraph);
+    this.renderer.completeParagraph(this.currentParagraph);
     this.renderer.unhideNthParagraph(10 + this.index, this.paragraphs);
     this.currentParagraph = this.paragraphs[this.index];
     this.initializeFirstSpan();
@@ -71,8 +70,9 @@ export class InputController {
     //Reset user curent stats logic here?
   }
   // Gets new poem text and restarts
-  async reset(textField) {
-    textField.innerHTML = `<input id="hidden-input" autofocus />Loading new poem...`;
+  async reset(textField, accuracyField) {
+    accuracyField.innerHTML = "Accuracy: 0%";
+    textField.innerHTML = `<input id="hidden-input" autofocus /><p> Loading new poem...</p>`;
     this.paragraphs = await preparePoem();
     textField.innerHTML = `<input id="hidden-input" autofocus />`;
     this.currentParagraph = this.paragraphs[0];
@@ -82,25 +82,58 @@ export class InputController {
     this.initializeParagraphs();
     this.restart();
   }
+  //Checks if timer is up
+  async checkForEnd() {
+    return new Promise((resolve) => {
+      setInterval(() => {
+        if (this.timer.remainingTime === 0 && this.timer.running) {
+          this.timer.stop();
+          const correctWords = this.engine.getCorrectWords(this.paragraphs);
+          const accuracy = this.engine.calculateAccuracy(this.paragraphs);
+          const wpm = (correctWords / this.timer.duration) * 60;
+          console.log(`Trying to write WPM: ${wpm} \n accuracy: ${accuracy}%`);
+          this.user.addWpmEntry(wpm);
+          this.user.addAccuracyEntry(accuracy);
+          resolve();
+        }
+      }, 1);
+    });
+  }
+  // Handles Accuracy calculation and renderign
   handleAccuracy(DomElement) {
-    let accuracy = this.engine.calculateCorrectWords(
+    let accuracy = this.engine.calculateAccuracy(
       this.paragraphs.slice(0, this.index + 1)
     );
     if (isNaN(accuracy)) {
       accuracy = 0;
     }
-    this.renderer.renderAccuracy(DomElement, accuracy);
+    this.user.accuracy = accuracy;
+    console.log(`User accuracy:${this.user.accuracy}%`);
+    this.renderer.renderAccuracy(DomElement, this.user.accuracy);
   }
-  handleWpm(DomElement) {
+  // Updates WPM on set intervals
+  updateWpm(DomElement) {
     setInterval(() => {
-      const correctWords = this.engine.getCorrectWords(this.paragraphs);
-      const elapsedSeconds = this.timer.duration - this.timer.remainingTime;
+      this.handleWpm(DomElement);
+    }, 10);
+  }
+  // Handles WPM calculation and rendering of click
+  handleWpm(DomElement) {
+    const correctWords = this.engine.getCorrectWords(this.paragraphs);
+    let elapsedSeconds = this.timer.duration - this.timer.remainingTime;
+    if (elapsedSeconds === 0) {
+      this.user.wpm = 0;
+    } else {
       const wpm = (correctWords / elapsedSeconds) * 60;
-      this.renderer.renderWpm(DomElement, wpm);
-    }, 500);
+      this.user.wpm = parseInt(wpm.toFixed(0), 10);
+    }
+    this.renderer.renderWpm(DomElement, this.user.wpm);
   }
   // Handles keypress logic
   async handleKeyPress(key, textField, lineAutoComplete = false) {
+    console.log(
+      `correct words total = ${this.engine.getCorrectWords(this.paragraphs)}`
+    );
     if (this.paragraphs === null || this.currentParagraph === null) {
       return;
     }
@@ -145,7 +178,7 @@ export class InputController {
       }
       this.renderer.highlightCurrentWord(this.currentParagraph);
       console.log(
-        `Word accuracy: ${this.engine.calculateCorrectWords(
+        `Word accuracy: ${this.engine.calculateAccuracy(
           this.paragraphs.slice(0, this.index + 1)
         )}%`
       );

@@ -5,6 +5,7 @@ export class User {
     this.accuracy = 0;
     this.wpmHistory = []; // Example: [{date: '2024-05-12', wpm: 60}]
     this.accuracyHistory = []; // Example: [{date: '2024-05-12', accuracy: 100}]
+    this.getData();
   }
 
   // Retrieve user data from localStorage
@@ -12,18 +13,18 @@ export class User {
     const savedUserData = localStorage.getItem("userData");
     if (savedUserData) {
       const userData = JSON.parse(savedUserData);
-      this.wpm = userData.wpm || 0;
-      this.accuracy = userData.accuracy || 0;
+      this.wpm = 0;
+      this.accuracy = 0;
       this.wpmHistory = userData.wpmHistory || [];
       this.accuracyHistory = userData.accuracyHistory || [];
     }
   }
 
   // Save user data to localStorage
-  setData() {
+  saveData() {
     const userData = {
-      wpm: this.wpm,
-      accuracy: this.accuracy,
+      wpm: 0,
+      accuracy: 0,
       wpmHistory: this.wpmHistory,
       accuracyHistory: this.accuracyHistory,
     };
@@ -32,15 +33,16 @@ export class User {
 
   // Add new WPM entry to history
   addWpmEntry(wpm) {
+    console.log(`Trying to write user wpm: ${wpm}`);
     const date = new Date().toISOString().split("T")[0];
-    this.wpmHistory.push({ date, wpm });
-    this.setData();
+    this.wpmHistory.unshift({ date, wpm });
+    this.saveData();
   }
 
   // Add new accuracy entry to history
   addAccuracyEntry(accuracy) {
     const date = new Date().toISOString().split("T")[0];
-    this.accuracyHistory.push({ date, accuracy });
-    this.setData();
+    this.accuracyHistory.unshift({ date, accuracy });
+    this.saveData();
   }
 }

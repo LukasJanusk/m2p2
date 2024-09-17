@@ -1,9 +1,9 @@
 export class Timer {
-  constructor(duration) {
-    this.running = false;
-    this.end = false;
+  constructor(duration = 60) {
     this.duration = duration;
     this.remainingTime = duration;
+    this.running = false;
+    this.end = false;
     this.interval = 1000;
   }
   start() {
@@ -27,13 +27,6 @@ export class Timer {
     clearInterval(this.intervalId);
     console.log("Timer reset.");
   }
-  async checkForEnd() {
-    setInterval(() => {
-      if (this.remainingTime === 0) {
-        this.stop();
-      }
-    }, 10);
-  }
   stop() {
     clearInterval(this.intervalId);
     this.intervalId = null;
@@ -42,9 +35,9 @@ export class Timer {
     console.log("Time's up!");
   }
   displayTimer(timerDomElement) {
-    timerDomElement.innerText = ` Remaining: ${this.remainingTime}s`;
+    timerDomElement.innerText = `Remaining: ${this.remainingTime}s`;
   }
   async renderTimer(timerDiv) {
-    setInterval(() => this.displayTimer(timerDiv), 100);
+    setInterval(() => this.displayTimer(timerDiv), 10);
   }
 }
