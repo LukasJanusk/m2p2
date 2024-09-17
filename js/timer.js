@@ -24,7 +24,7 @@ export class Timer {
     this.remainingTime = this.duration;
     this.end = false;
     this.running = false;
-    clearInterval(this.interval);
+    clearInterval(this.intervalId);
     console.log("Timer reset.");
   }
   async checkForEnd() {

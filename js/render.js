@@ -62,7 +62,7 @@ export class Renderer {
     if (isNaN(wpm)) {
       wpm = 0;
     }
-    DomElement.innerHTML = `WPM = ${wpm.toFixed(0)}`;
+    DomElement.innerHTML = `WPM: ${wpm.toFixed(0)}`;
   }
   //un-hides nth paragraph
   unhideNthParagraph(n, paragraphs) {
@@ -89,6 +89,9 @@ export class Renderer {
     const currentSpanIndex = spans.findIndex(
       (span) => span.className === "current"
     );
+    if (currentSpanIndex === -1) {
+      return;
+    }
     const startIndex = (currentSpanIndex) => {
       for (let index = currentSpanIndex; index > 0; index--) {
         if (spans[index].textContent === " ") {

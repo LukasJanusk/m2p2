@@ -72,11 +72,9 @@ export class InputController {
   }
   // Gets new poem text and restarts
   async reset(textField) {
-    // this.paragraphs = null;
-    // this.currentParagraph = null;
     textField.innerHTML = `<input id="hidden-input" autofocus />Loading new poem...`;
     this.paragraphs = await preparePoem();
-    textField.innerHTML = "";
+    textField.innerHTML = `<input id="hidden-input" autofocus />`;
     this.currentParagraph = this.paragraphs[0];
     this.paragraphs.forEach((paragraph) => {
       textField.appendChild(paragraph);
@@ -84,11 +82,11 @@ export class InputController {
     this.initializeParagraphs();
     this.restart();
   }
-  async handleAccuracy(DomElement) {
+  handleAccuracy(DomElement) {
     let accuracy = this.engine.calculateCorrectWords(
       this.paragraphs.slice(0, this.index + 1)
     );
-    if (accuracy === NaN) {
+    if (isNaN(accuracy)) {
       accuracy = 0;
     }
     this.renderer.renderAccuracy(DomElement, accuracy);
@@ -96,10 +94,8 @@ export class InputController {
   handleWpm(DomElement) {
     setInterval(() => {
       const correctWords = this.engine.getCorrectWords(this.paragraphs);
-      const wpm =
-        (correctWords / (this.timer.duration - this.timer.remainingTime)) *
-        this.timer.duration;
-
+      const elapsedSeconds = this.timer.duration - this.timer.remainingTime;
+      const wpm = (correctWords / elapsedSeconds) * 60;
       this.renderer.renderWpm(DomElement, wpm);
     }, 500);
   }
@@ -134,7 +130,6 @@ export class InputController {
       }
     } else if (key === "Enter" && this.timer.end) {
       this.restart();
-      this.timer.end = false;
     } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
       this.handleEnter();
     } else if (key === "Escape" && this.timer.end) {

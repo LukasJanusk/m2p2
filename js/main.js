@@ -8,7 +8,7 @@ async function handleLoading() {
     let wpmField = document.getElementById("wpm");
     let accuracyField = document.getElementById("accuracy");
     textField.innerHTML = `<input id="hidden-input" autofocus />Loading new poem...`;
-    const timer = new Timer(60);
+    const timer = new Timer(10);
     const poem = await preparePoem();
     textField.innerHTML = `<input id="hidden-input" autofocus />`;
     const inputController = new InputController(timer, poem);
@@ -21,8 +21,9 @@ async function handleLoading() {
     });
     timer.displayTimer(timerDiv);
     document.addEventListener("keydown", (event) => {
+      event.preventDefault();
       inputController.focusInput(hiddenInput);
-      inputController.handleKeyPress(event.key, textField, false);
+      inputController.handleKeyPress(event.key, textField, true);
       inputController.handleAccuracy(accuracyField);
     });
     resetButton.addEventListener("click", () => {
