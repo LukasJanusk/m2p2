@@ -21,8 +21,9 @@ header {
   align-self: center;
 }
 footer {
-  background: linear-gradient(to bottom, tomato, rgb(236, 125, 105));
-  border-top: 1px solid gray;
+  background-color: antiquewhite;
+  /* background: linear-gradient(to bottom, tomato, rgb(236, 125, 105));
+  border-top: 1px solid gray; */
 }
 #main {
   display: grid;
@@ -51,8 +52,24 @@ footer {
   margin-right: 20vw;
 }
 #statistics {
+  background-color: white;
   display: none;
   min-height: 500px;
+  border-radius: 1rem;
+  border: 1px solid gray;
+}
+#wpm-statistics,
+#accuracy-statistics {
+  margin: 10px;
+  border: 1px solid gray;
+  border-radius: 1rem;
+}
+#reset {
+  margin: 10px;
+}
+canvas {
+  width: 500px;
+  height: 400px;
 }
 button {
   border-radius: 1rem;

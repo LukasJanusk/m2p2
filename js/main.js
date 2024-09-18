@@ -18,7 +18,7 @@ async function handleLoading() {
     const wpmField = document.getElementById("wpm");
     const accuracyField = document.getElementById("accuracy");
     const statisticsField = document.getElementById("statistics");
-    const timer = new Timer(60);
+    const timer = new Timer(10);
     const textField = document.getElementById("text-field");
     const poem = await loadInitialPoem(textField);
     if (!poem) {
@@ -38,7 +38,7 @@ async function handleLoading() {
         accuracyField,
         wpmField,
         statisticsField,
-        true
+        false
       );
       inputController.handleAccuracy(accuracyField);
       inputController.handleWpm(wpmField);

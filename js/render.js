@@ -8,8 +8,10 @@ export class Renderer {
     );
     if (currentSpan.innerHTML === key) {
       currentSpan.className = "correct";
+      this.playCorrectSound();
     } else {
       currentSpan.className = "incorrect";
+      this.playIncorrectSound();
     }
     if (spans.length > currentSpanIndex + 1)
       spans[currentSpanIndex + 1].className = "current";
@@ -26,6 +28,7 @@ export class Renderer {
       newCurrent.className = "current";
       return true;
     } else if (currentSpanIndex > 0) {
+      this.playCorrectSound();
       const newCurrent = spans[currentSpanIndex - 1];
       newCurrent.className = "current";
       currentSpan.className = "";
@@ -36,9 +39,11 @@ export class Renderer {
         p.classList.contains("completed")
       );
       if (completeParagraphs.length === 0) {
+        this.playIncorrectSound();
         console.log("No complete paragraphs found: returning");
         return true;
       }
+      this.playCorrectSound();
       const lastCompleteParagraph =
         completeParagraphs[completeParagraphs.length - 1];
       this.unhideParagraph(lastCompleteParagraph);
@@ -139,27 +144,80 @@ export class Renderer {
     });
     spans[currentSpanIndex].className = "current";
   }
-  //Generates graph DOMelement
-  generateGraph(graphDomELement, user, key) {
-    const domAccessName = `${key}-statistics`;
-    console.log(domAccessName);
-    const canvas = graphDomELement.querySelector(`#${domAccessName}`);
-    const ctx = canvas.getContext("2d");
-    const historyKey = `${key}History`;
-    const dataPoints = user[historyKey]
-      ? user[historyKey].slice(0, 5).map((item) => item[key])
-      : [];
-    const reversed = [...dataPoints].reverse();
-    ctx.beginPath();
-    ctx.moveTo(50, 400 - reversed[0]); // Start point
-
-    for (let i = 1; i < reversed.length; i++) {
-      ctx.lineTo(50 + i * 60, 400 - reversed[i]); // Draw line to next point
-    }
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  playCorrectSound() {
+    const audio = new Audio("../sounds/correct.ogg");
+    audio.play();
   }
+  playIncorrectSound() {
+    const audio = new Audio("../sounds/incorrect.ogg");
+    audio.play();
+  }
+  //Generates graph DOMelement
+  generateGraph(graphDomElement, user, key) {
+    const domAccessName = `${key}-statistics`;
+    const historyKey = `${key}History`;
+    const ctx = graphDomElement
+      .querySelector(`#${domAccessName}`)
+      .getContext("2d");
+    if (ctx.chart) {
+      ctx.chart.destroy();
+    }
+    const dataPoints = user[historyKey]
+      ? user[historyKey]
+          .slice(0, 5)
+          .map((item) => parseFloat(item[key]))
+          .reverse()
+      : [];
+
+    const dateLabels = user[historyKey]
+      ? user[historyKey]
+          .slice(0, 5)
+          .map((item) => item["date"])
+          .reverse()
+      : [];
+
+    ctx.chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: dateLabels,
+        datasets: [
+          {
+            label: key.toUpperCase(),
+            data: dataPoints,
+            fill: false,
+            borderColor: "rgb(255, 99, 71)",
+            tension: 0.1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+        plugins: {
+          // Use the dataLabels plugin to display values above each point
+          datalabels: {
+            align: "end", // Align labels at the end of the point
+            anchor: "end", // Anchor labels to the top of each point
+            backgroundColor: "rgba(0, 0, 0, 0.7)", // Optional: Background color for label
+            borderRadius: 3,
+            color: "white",
+            font: {
+              weight: "bold",
+            },
+            formatter: function (value) {
+              return value.toFixed(1); // Format the label value
+            },
+            offset: 5, // Shift the label up or down to avoid overlap
+          },
+        },
+      },
+      plugins: [ChartDataLabels], // Include the dataLabels plugin
+    });
+  }
+
   generateGraphs(DomContainerElement, user) {
     this.generateGraph(DomContainerElement, user, "wpm");
     this.generateGraph(DomContainerElement, user, "accuracy");

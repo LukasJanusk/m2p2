@@ -163,7 +163,8 @@ export class InputController {
       key !== "Enter" &&
       key !== "Backspace"
     ) {
-      // Show message for the user
+      this.renderer.playIncorrectSound();
+      this.handleEnter();
       console.log("Press Enter or Backspace at line end!");
       return;
     } else if (key === "Backspace" && !this.timer.end) {
@@ -181,6 +182,7 @@ export class InputController {
       this.restart(textField, statisticsField);
     } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
       this.handleEnter();
+      this.renderer.playCorrectSound();
     } else if (key === "Escape" && this.timer.end) {
       await this.reset(textField, accuracyField, wpmField, statisticsField);
     } else if (key !== "Shift" && this.timer.running && !this.timer.end) {
