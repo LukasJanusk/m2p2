@@ -17,15 +17,18 @@ async function handleLoading() {
     const resetButton = document.querySelector("#reset");
     const wpmField = document.getElementById("wpm");
     const accuracyField = document.getElementById("accuracy");
+    const statisticsField = document.getElementById("statistics");
     const timer = new Timer(60);
     const textField = document.getElementById("text-field");
     const poem = await loadInitialPoem(textField);
+    if (!poem) {
+      alert("Failed to fetch poem data, reload page to retry");
+      return;
+    }
     const inputController = new InputController(timer, poem, user);
-
     poem.forEach((paragraph) => {
       textField.appendChild(paragraph);
     });
-
     document.addEventListener("keydown", (event) => {
       event.preventDefault();
       inputController.focusInput(hiddenInput);
@@ -34,15 +37,21 @@ async function handleLoading() {
         textField,
         accuracyField,
         wpmField,
+        statisticsField,
         true
       );
       inputController.handleAccuracy(accuracyField);
       inputController.handleWpm(wpmField);
     });
     resetButton.addEventListener("click", () => {
-      inputController.reset(textField, accuracyField, wpmField);
+      inputController.reset(
+        textField,
+        accuracyField,
+        wpmField,
+        statisticsField
+      );
     });
-    inputController.checkForEnd();
+    inputController.checkForEnd(textField, statisticsField);
     inputController.timer.renderTimer(timerDiv);
     if (inputController.timer.remainingTime > 0) {
       inputController.updateWpm(wpmField);

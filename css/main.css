@@ -50,6 +50,10 @@ footer {
   margin-left: 20vw;
   margin-right: 20vw;
 }
+#statistics {
+  display: none;
+  min-height: 500px;
+}
 button {
   border-radius: 1rem;
   min-height: 30px;

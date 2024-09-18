@@ -50,7 +50,9 @@ export class InputController {
     this.paragraphEnd = false;
   }
   // Restarts current text test
-  restart() {
+  restart(textField, statisticsField) {
+    textField.style.display = "";
+    statisticsField.style.display = "none";
     this.index = 0;
     this.paragraphs.forEach((paragraph, i) => {
       paragraph.className = "";
@@ -67,25 +69,29 @@ export class InputController {
     this.initializeFirstSpan();
     this.renderer.highlightCurrentWord(this.currentParagraph);
     this.timer.reset();
+    this.user.wpm = 0;
+    this.user.accuracy = 0;
     //Reset user curent stats logic here?
   }
   // Gets new poem text and restarts
-  async reset(textField, accuracyField, wpmField) {
+  async reset(textField, accuracyField, wpmField, statisticsField) {
     this.timer.reset();
     accuracyField.innerHTML = "Accuracy: 0%";
     wpmField.innerHTML = "WPM: 0";
+    textField.style.display = "";
+    statisticsField.style.display = "none";
     textField.innerHTML = `<input id="hidden-input" autofocus /><p> Loading new poem...</p>`;
     this.paragraphs = await preparePoem();
     textField.innerHTML = `<input id="hidden-input" autofocus />`;
-    this.currentParagraph = this.paragraphs[0];
     this.paragraphs.forEach((paragraph) => {
       textField.appendChild(paragraph);
     });
+    this.index = 0;
+    this.currentParagraph = this.paragraphs[this.index];
     this.initializeParagraphs();
-    this.restart();
   }
   // Checks if timer is up and saves user data on time up
-  async checkForEnd() {
+  async checkForEnd(textField, statisticsField) {
     return new Promise((resolve) => {
       setInterval(() => {
         if (this.timer.remainingTime === 0 && this.timer.running) {
@@ -95,10 +101,17 @@ export class InputController {
           const wpm = (correctWords / this.timer.duration) * 60;
           this.user.addWpmEntry(wpm);
           this.user.addAccuracyEntry(accuracy);
+          this.showStatistics(textField, statisticsField);
           resolve();
         }
       }, 1);
     });
+  }
+  // Shows statistics and hides textField
+  showStatistics(textField, statisticsField) {
+    textField.style.display = "none";
+    statisticsField.style.display = "grid";
+    this.renderer.generateGraphs(statisticsField, this.user);
   }
   // Handles Accuracy calculation and rendering
   handleAccuracy(DomElement) {
@@ -135,6 +148,7 @@ export class InputController {
     textField,
     accuracyField,
     wpmField,
+    statisticsField,
     lineAutoComplete = false
   ) {
     if (this.paragraphs === null || this.currentParagraph === null) {
@@ -160,15 +174,15 @@ export class InputController {
         !this.renderer.handleBackspace(this.currentParagraph, this.paragraphs)
       ) {
         this.index--;
-        this.paragraphEnd = false;
+        this.paragraphEnd = true;
         this.currentParagraph = this.paragraphs[this.index];
       }
     } else if (key === "Enter" && this.timer.end) {
-      this.restart();
+      this.restart(textField, statisticsField);
     } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
       this.handleEnter();
     } else if (key === "Escape" && this.timer.end) {
-      await this.reset(textField, accuracyField, wpmField);
+      await this.reset(textField, accuracyField, wpmField, statisticsField);
     } else if (key !== "Shift" && this.timer.running && !this.timer.end) {
       this.renderer.renderLetter(key, this.currentParagraph);
       this.paragraphEnd = this.engine.checkForParagraphEnd(
@@ -176,9 +190,8 @@ export class InputController {
       );
       if (this.paragraphEnd && lineAutoComplete) {
         this.handleEnter();
-        //run correct word logic
       }
-      this.renderer.highlightCurrentWord(this.currentParagraph);
+      // this.renderer.highlightCurrentWord(this.currentParagraph);
     }
     this.renderer.highlightCurrentWord(this.currentParagraph);
   }

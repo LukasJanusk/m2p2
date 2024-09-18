@@ -29,7 +29,7 @@
       </div>
     </header>
     <div id="main">
-      <div class="main-item">
+      <div id="realtime-info" class="main-item">
         <div id="timer">Remaining: 60s</div>
         <div id="wpm">WPM: 0</div>
         <div id="accuracy">Accuracy: 0%</div>
@@ -37,7 +37,9 @@
       <div id="text-field" class="main-item">
         <input id="hidden-input" autofocus />
       </div>
-      <div class="main-item">
+      <div id="statistics" class="main-item">
+        <canvas id="wpm-statistics" class="statistics-item"></canvas>
+        <canvas id="accuracy-statistics" class="statistics-item"></canvas>
         <button id="reset">Reset</button>
       </div>
     </div>

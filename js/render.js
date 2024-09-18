@@ -31,6 +31,7 @@ export class Renderer {
       currentSpan.className = "";
       return true;
     } else {
+      spans.forEach((span) => (span.className = ""));
       const completeParagraphs = paragraphs.filter((p) =>
         p.classList.contains("completed")
       );
@@ -41,6 +42,7 @@ export class Renderer {
       const lastCompleteParagraph =
         completeParagraphs[completeParagraphs.length - 1];
       this.unhideParagraph(lastCompleteParagraph);
+      this.hideParagraph(paragraphs[completeParagraphs.length + 9]);
       const newSpans = Array.from(
         lastCompleteParagraph.querySelectorAll("span")
       );
@@ -76,6 +78,12 @@ export class Renderer {
   //un-hides paragraph
   unhideParagraph(paragraph) {
     paragraph.style.display = "";
+    paragraph.className = "";
+  }
+  h;
+  // hides paragraph
+  hideParagraph(paragraph) {
+    paragraph.style.display = "none";
     paragraph.className = "";
   }
   //completes and hides selected paragraph
@@ -130,5 +138,30 @@ export class Renderer {
       span.className = "";
     });
     spans[currentSpanIndex].className = "current";
+  }
+  //Generates graph DOMelement
+  generateGraph(graphDomELement, user, key) {
+    const domAccessName = `${key}-statistics`;
+    console.log(domAccessName);
+    const canvas = graphDomELement.querySelector(`#${domAccessName}`);
+    const ctx = canvas.getContext("2d");
+    const historyKey = `${key}History`;
+    const dataPoints = user[historyKey]
+      ? user[historyKey].slice(0, 5).map((item) => item[key])
+      : [];
+    const reversed = [...dataPoints].reverse();
+    ctx.beginPath();
+    ctx.moveTo(50, 400 - reversed[0]); // Start point
+
+    for (let i = 1; i < reversed.length; i++) {
+      ctx.lineTo(50 + i * 60, 400 - reversed[i]); // Draw line to next point
+    }
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  generateGraphs(DomContainerElement, user) {
+    this.generateGraph(DomContainerElement, user, "wpm");
+    this.generateGraph(DomContainerElement, user, "accuracy");
   }
 }

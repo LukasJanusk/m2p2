@@ -6,7 +6,7 @@ function pickRandom(items) {
 }
 // Returns one of 3 randomly selected author
 function getAuthor() {
-  const authors = ["William Shakespeare", "John Keats"];
+  const authors = ["John Keats"];
   const selectedAuthor = pickRandom(authors);
   return selectedAuthor;
 }
@@ -76,21 +76,26 @@ function getLocalPoem() {
     return null; // Handle when no poems exist
   }
 }
-// Gets poem from API and converts it paragraphs DOMElements
-export async function preparePoem(useLocalStorage = true) {
+// Gets poem from API and converts it to paragraph DOMElements
+export async function preparePoem(useLocalStorage = false) {
   if (useLocalStorage) {
-    const localPoem = getLocalPoem();
+    let localPoem = getLocalPoem();
     if (localPoem) {
       return createParagraphs(localPoem);
     }
   }
   const author = getAuthor();
   const poems = await getPoems(author);
+  if (!poems) {
+    let localPoem = getLocalPoem();
+    if (localPoem) {
+      return createParagraphs(localPoem);
+    }
+    return null;
+  }
   const longPoems = getLongPoems(poems);
   const fixedPoems = fixPoems(longPoems);
-  if (useLocalStorage) {
-    savePoems(fixedPoems);
-  }
+  savePoems(fixedPoems);
   const poem = pickRandom(fixedPoems);
   return createParagraphs(poem);
 }
