@@ -164,18 +164,17 @@ export class InputController {
       key !== "Backspace"
     ) {
       this.renderer.playIncorrectSound();
-      this.handleEnter();
+      // this.handleEnter();
       console.log("Press Enter or Backspace at line end!");
       return;
     } else if (key === "Backspace" && !this.timer.end) {
-      if (this.paragraphEnd === true) {
+      if (this.paragraphEnd) {
         this.paragraphEnd = false;
       }
       if (
         !this.renderer.handleBackspace(this.currentParagraph, this.paragraphs)
       ) {
         this.index--;
-        this.paragraphEnd = true;
         this.currentParagraph = this.paragraphs[this.index];
       }
     } else if (key === "Enter" && this.timer.end) {

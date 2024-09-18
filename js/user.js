@@ -29,7 +29,9 @@ export class User {
   }
   // Add new WPM entry to history
   addWpmEntry(wpm) {
-    console.log(`Trying to write user wpm: ${wpm}`);
+    if (isNaN(wpm)) {
+      wpm = 0;
+    }
     const date = new Date().toISOString().split("T")[0];
     this.wpmHistory.unshift({ date, wpm });
     this.saveData();
@@ -37,6 +39,9 @@ export class User {
 
   // Add new accuracy entry to history
   addAccuracyEntry(accuracy) {
+    if (isNaN(accuracy)) {
+      accuracy = 0;
+    }
     const date = new Date().toISOString().split("T")[0];
     this.accuracyHistory.unshift({ date, accuracy });
     this.saveData();

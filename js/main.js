@@ -13,12 +13,13 @@ async function handleLoading() {
   document.addEventListener("DOMContentLoaded", async () => {
     const user = new User();
     const timerDiv = document.querySelector("#timer");
+    const realTimeInfo = document.querySelector("#realtime-info");
     const hiddenInput = document.querySelector("#hidden-input");
     const resetButton = document.querySelector("#reset");
     const wpmField = document.getElementById("wpm");
     const accuracyField = document.getElementById("accuracy");
     const statisticsField = document.getElementById("statistics");
-    const timer = new Timer(10);
+    const timer = new Timer(60);
     const textField = document.getElementById("text-field");
     const poem = await loadInitialPoem(textField);
     if (!poem) {

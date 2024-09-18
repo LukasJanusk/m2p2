@@ -21,9 +21,8 @@ header {
   align-self: center;
 }
 footer {
-  background-color: antiquewhite;
-  /* background: linear-gradient(to bottom, tomato, rgb(236, 125, 105));
-  border-top: 1px solid gray; */
+  background: linear-gradient(to bottom, tomato, rgb(236, 125, 105));
+  border-top: 1px solid gray;
 }
 #main {
   display: grid;
@@ -61,8 +60,7 @@ footer {
 #wpm-statistics,
 #accuracy-statistics {
   margin: 10px;
-  border: 1px solid gray;
-  border-radius: 1rem;
+  border: 1px solid rgba(128, 128, 128, 0.334);
 }
 #reset {
   margin: 10px;

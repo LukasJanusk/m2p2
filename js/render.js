@@ -39,8 +39,9 @@ export class Renderer {
         p.classList.contains("completed")
       );
       if (completeParagraphs.length === 0) {
+        spans[0].className = "current";
         this.playIncorrectSound();
-        console.log("No complete paragraphs found: returning");
+        console.log("No complete paragraphs found");
         return true;
       }
       this.playCorrectSound();
@@ -199,7 +200,7 @@ export class Renderer {
         plugins: {
           // Use the dataLabels plugin to display values above each point
           datalabels: {
-            align: "end", // Align labels at the end of the point
+            align: "start", // Align labels at the end of the point
             anchor: "end", // Anchor labels to the top of each point
             backgroundColor: "rgba(0, 0, 0, 0.7)", // Optional: Background color for label
             borderRadius: 3,
@@ -217,7 +218,7 @@ export class Renderer {
       plugins: [ChartDataLabels], // Include the dataLabels plugin
     });
   }
-
+  // Generates graphs for WPM and accuracy
   generateGraphs(DomContainerElement, user) {
     this.generateGraph(DomContainerElement, user, "wpm");
     this.generateGraph(DomContainerElement, user, "accuracy");
