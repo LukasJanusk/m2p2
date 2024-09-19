@@ -26,11 +26,11 @@ function toggleLineBreak(settings, toggle) {
     toggle.innerText = "Line Auto Break - OFF";
   } else {
     settings.autoComplete = true;
-    toggle.innerText = "Line Auto Break --ON";
+    toggle.innerText = "Line Auto Break -- ON";
   }
   settings.save();
 }
-
+// Runs button click based on clicked button ID
 export function runToggles(toggle, theme, settings) {
   if (toggle.id === "sound-toggle") {
     toggleSound(settings, toggle);
@@ -40,7 +40,7 @@ export function runToggles(toggle, theme, settings) {
     toggleLineBreak(settings, toggle);
   }
 }
-
+// Initializes buttons based on settings
 export function loadButtons(settings, toggles) {
   toggles.forEach((toggle) => {
     if (toggle.id === "sound-toggle") {

@@ -1,5 +1,5 @@
 export class Renderer {
-  //asigns class to a span based on input
+  // Asigns class to a span based on input
   renderLetter(key, paragraph, sound) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpan = paragraph.querySelector(".current");
@@ -20,6 +20,7 @@ export class Renderer {
     if (spans.length > currentSpanIndex + 1)
       spans[currentSpanIndex + 1].className = "current";
   }
+  // Determines which class asign for a spans of paragraphs on Backspace click
   handleBackspace(paragraph, paragraphs, sound) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpan = paragraph.querySelector(".current");
@@ -68,21 +69,21 @@ export class Renderer {
       return false;
     }
   }
-  // updates innerHTML with current values of accuracy
+  // Updates innerHTML with current values of accuracy
   renderAccuracy(DomElement, accuracy) {
     if (isNaN(accuracy)) {
       accuracy = 0;
     }
     DomElement.innerText = `Accuracy: ${accuracy}%`;
   }
-  // updates innerHTML with current values
+  // Updates innerHTML with current values
   renderWpm(DomElement, wpm) {
     if (isNaN(wpm)) {
       wpm = 0;
     }
     DomElement.innerHTML = `WPM: ${wpm}`;
   }
-  //un-hides nth paragraph
+  // Un-hides nth paragraph
   unhideNthParagraph(n, paragraphs) {
     if (paragraphs.length >= n) {
       const tenthParagraph = paragraphs[n - 1];
@@ -91,30 +92,30 @@ export class Renderer {
       console.log(`Less than ${n} paragraphs available.`);
     }
   }
-  //un-hides paragraph
+  // Un-hides paragraph
   unhideParagraph(paragraph) {
     paragraph.style.display = "";
     paragraph.className = "";
   }
   h;
-  // hides paragraph
+  // Hides  a paragraph
   hideParagraph(paragraph) {
     paragraph.style.display = "none";
     paragraph.className = "";
   }
-  //completes and hides selected paragraph
+  // Completes and hides selected paragraph
   completeParagraph(paragraph) {
     paragraph.style.display = "none";
     paragraph.className = "completed";
   }
-  // hide paragraphs from nth
+  // Hide paragraphs from nth to last
   hideParagraphs(n, paragraphs) {
     const toHide = paragraphs.slice(n);
     toHide.forEach((paragraph) => {
       paragraph.style.display = "none";
     });
   }
-  //hihglights current word
+  // Selects and hihglights current word
   highlightCurrentWord(paragraph) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpanIndex = spans.findIndex(
@@ -165,6 +166,7 @@ export class Renderer {
   }
   //Generates graph DOMelement
   generateGraph(graphDomElement, user, key) {
+    const start = key === "wpm";
     const domAccessName = `${key}-statistics`;
     const historyKey = `${key}History`;
     const ctx = graphDomElement
@@ -204,7 +206,7 @@ export class Renderer {
       options: {
         scales: {
           y: {
-            beginAtZero: true,
+            beginAtZero: start,
           },
         },
         plugins: {

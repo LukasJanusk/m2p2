@@ -162,6 +162,10 @@ export class InputController {
     }
     this.renderer.renderWpm(DomElement, this.user.wpm);
   }
+  // Focuses user input to hidden textfield
+  focusInput(DOMInputField) {
+    DOMInputField.focus();
+  }
   // Handles keypress logic
   async handleKeyPress(
     key,
@@ -237,9 +241,5 @@ export class InputController {
       }
     }
     this.renderer.highlightCurrentWord(this.currentParagraph);
-  }
-  // Focuses user input to hidden textfield
-  focusInput(DOMInputField) {
-    DOMInputField.focus();
   }
 }
