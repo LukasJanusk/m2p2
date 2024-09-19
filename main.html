@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Type Speed Test</title>
     <link href="./css/main.css" rel="stylesheet" type="text/css" />
+    <link id="theme" href="./css/light.css" rel="stylesheet" type="text/css" />
     <script src="./js/main.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
@@ -15,19 +16,9 @@
         <h1>Type Speed Test</h1>
       </div>
       <div class="header-item" id="toggles">
-        <button>Theme</button>
-        <button>
-          Sound
-          <!-- <img id="on" src="/icons/sound-svgrepo-com.svg" alt="Sound On" />
-          <img
-            hidden
-            id="off"
-            src="/icons/sound-off-svgrepo-com.svg"
-            alt="Sound Off"
-          /> -->
-        </button>
-        <button>Highlight</button>
-        <button>Auto Line break</button>
+        <button id="theme-toggle" class="toggle"></button>
+        <button id="sound-toggle" class="toggle"></button>
+        <button id="lineBreak-toggle" class="toggle"></button>
       </div>
     </header>
     <div id="main">
@@ -36,18 +27,16 @@
         <div id="wpm">WPM: 0</div>
         <div id="accuracy">Accuracy: 0%</div>
       </div>
+      <div id="results" class="main-item"></div>
       <div id="text-field" class="main-item">
         <input id="hidden-input" autofocus />
       </div>
       <div id="statistics" class="main-item">
         <canvas id="wpm-statistics" class="statistics-item"></canvas>
         <canvas id="accuracy-statistics" class="statistics-item"></canvas>
-        <button id="reset">Reset</button>
+        <button id="reset" class="statistics-item">Reset</button>
       </div>
     </div>
-    <footer>
-      <div id="links" class="footer-item"></div>
-      <div id="tbd" class="fotter-item"></div>
-    </footer>
+    <footer></footer>
   </body>
 </html>

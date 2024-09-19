@@ -1,0 +1,67 @@
+body {
+  background-color: rgb(39, 45, 33);
+  color: rgb(236, 223, 204);
+}
+header {
+  background: linear-gradient(to top, rgb(60, 61, 55), rgb(24, 28, 20));
+  border-bottom: 1px solid rgb(83, 81, 81);
+}
+footer {
+  background: linear-gradient(to bottom, rgb(60, 61, 55), rgb(24, 28, 20));
+  border-top: 1px solid rgb(83, 81, 81);
+}
+#main {
+  background-color: rgb(78, 81, 72);
+  color: rgb(236, 223, 204);
+}
+#statistics {
+  background-color: rgb(215, 215, 215);
+  border: 1px solid gray;
+}
+#text-field {
+  background-color: rgb(60, 61, 55);
+  border: 1px solid gray;
+}
+
+@keyframes color-change {
+  0% {
+    background-color: rgb(132, 134, 119);
+  }
+  50% {
+    background-color: rgb(83, 83, 77);
+  }
+  100% {
+    background-color: rgb(132, 134, 119);
+  }
+}
+button {
+  background-color: #4a3125;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #543c2e;
+}
+button:active {
+  background-color: #674b38;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.current-word {
+  background-color: rgb(83, 83, 77);
+}
+.correct {
+  background-color: rgb(58, 88, 51);
+}
+.incorrect {
+  background-color: rgb(100, 41, 41);
+}
+.current {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  animation: color-change 2s ease-in-out infinite;
+}

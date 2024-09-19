@@ -49,28 +49,46 @@ export class User {
   // Calculates wpm improvement in percentage from the last attempt
   calculateWpmChange() {
     const currentWpm = this.wpmHistory[0]?.wpm;
-    const previousWpm = this.wpmHistory[0]?.wpm;
+    const previousWpm = this.wpmHistory[1]?.wpm; // Should reference [1] for the previous value
+    if (previousWpm === undefined || currentWpm === undefined) {
+      return "Could not calculate WPM change.";
+    }
     const percentageChange = ((currentWpm - previousWpm) / previousWpm) * 100;
     if (percentageChange > 0) {
-      return `${percentageChange}% faster!`;
+      return `<strong>WPM: ${currentWpm}</strong> - You were <strong>${percentageChange.toFixed(
+        0
+      )}%</strong> faster!`;
     } else if (percentageChange < 0) {
-      return `${math.abs(percentageChange).toFixed(1)}% slower}`;
+      return `<strong>WPM: ${currentWpm}</strong> - You were <strong>${Math.abs(
+        percentageChange
+      ).toFixed(0)}%</strong> slower.`;
     } else if (percentageChange === 0) {
-      return `Just as fast as the last attempt`;
+      return `<strong>WPM: ${currentWpm}</strong> - You were just as fast as the last attempt.`;
+    } else {
+      return "Could not calculate WPM change.";
     }
   }
   // Calculates accuracy improvements in percentage from the last attempt
   calculateAccuracyChange() {
     const currentAccuracy = this.accuracyHistory[0]?.accuracy;
-    const previousAccuracy = this.accuracyHistory[1]?.this.accuracy;
+    const previousAccuracy = this.accuracyHistory[1]?.accuracy;
+    if (previousAccuracy === undefined || currentAccuracy === undefined) {
+      return "Could not calculate accuracy change.";
+    }
     const percentageChange =
       ((currentAccuracy - previousAccuracy) / previousAccuracy) * 100;
     if (percentageChange > 0) {
-      return `${percentageChange}% more accurate!`;
+      return `<strong>ACCURACY: ${currentAccuracy}%</strong> - You were <strong>${percentageChange.toFixed(
+        0
+      )}%</strong> more accurate`;
     } else if (percentageChange < 0) {
-      return `${math.abs(percentageChange).toFixed(1)}% less accurate}`;
+      return `<strong>ACCURACY: ${currentAccuracy}%</strong> - You were <strong>${Math.abs(
+        percentageChange
+      ).toFixed(0)}%</strong> less accurate.`;
     } else if (percentageChange === 0) {
-      return `Just as accurate as the last attempt`;
+      return `<strong>ACCURACY: ${currentAccuracy}%</strong> - You were just as accurate as the last attempt.`;
+    } else {
+      return "Could not calculate accuracy change.";
     }
   }
 }

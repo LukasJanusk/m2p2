@@ -1,10 +1,10 @@
 export class Settings {
   constructor() {
     // Default settings
-    this.theme = "light";
-    this.sound = true;
-    this.autocomplete = true;
-    this.highlight = true;
+    // this.theme = "light";
+    // this.sound = true;
+    // this.autoComplete = false;
+    this.load();
   }
 
   // Load settings from localStorage
@@ -14,20 +14,20 @@ export class Settings {
       const settings = JSON.parse(savedSettings);
       this.theme = settings.theme || "light";
       this.sound = settings.sound !== undefined ? settings.sound : true;
-      this.autocomplete =
-        settings.autocomplete !== undefined ? settings.autocomplete : true;
-      this.highlight =
-        settings.highlight !== undefined ? settings.highlight : true;
+      this.autoComplete =
+        settings.autoComplete !== undefined ? settings.autoComplete : true;
+    } else {
+      this.theme = "light";
+      this.sound = true;
+      this.autoComplete = false;
     }
   }
-
   // Save settings to localStorage
   save() {
     const settings = {
       theme: this.theme,
       sound: this.sound,
-      autocomplete: this.autocomplete,
-      highlight: this.highlight,
+      autoComplete: this.autoComplete,
     };
     localStorage.setItem("settings", JSON.stringify(settings));
   }

@@ -1,6 +1,6 @@
 export class Renderer {
   //asigns class to a span based on input
-  renderLetter(key, paragraph) {
+  renderLetter(key, paragraph, sound) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpan = paragraph.querySelector(".current");
     const currentSpanIndex = spans.findIndex(
@@ -8,15 +8,19 @@ export class Renderer {
     );
     if (currentSpan.innerHTML === key) {
       currentSpan.className = "correct";
-      this.playCorrectSound();
+      if (sound) {
+        this.playCorrectSound();
+      }
     } else {
       currentSpan.className = "incorrect";
-      this.playIncorrectSound();
+      if (sound) {
+        this.playIncorrectSound();
+      }
     }
     if (spans.length > currentSpanIndex + 1)
       spans[currentSpanIndex + 1].className = "current";
   }
-  handleBackspace(paragraph, paragraphs) {
+  handleBackspace(paragraph, paragraphs, sound) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpan = paragraph.querySelector(".current");
     const currentSpanIndex = spans.findIndex(
@@ -28,7 +32,9 @@ export class Renderer {
       newCurrent.className = "current";
       return true;
     } else if (currentSpanIndex > 0) {
-      this.playCorrectSound();
+      if (sound) {
+        this.playCorrectSound();
+      }
       const newCurrent = spans[currentSpanIndex - 1];
       newCurrent.className = "current";
       currentSpan.className = "";
@@ -40,11 +46,15 @@ export class Renderer {
       );
       if (completeParagraphs.length === 0) {
         spans[0].className = "current";
-        this.playIncorrectSound();
+        if (sound) {
+          this.playIncorrectSound();
+        }
         console.log("No complete paragraphs found");
         return true;
       }
-      this.playCorrectSound();
+      if (sound) {
+        this.playCorrectSound();
+      }
       const lastCompleteParagraph =
         completeParagraphs[completeParagraphs.length - 1];
       this.unhideParagraph(lastCompleteParagraph);
@@ -186,7 +196,7 @@ export class Renderer {
             label: key.toUpperCase(),
             data: dataPoints,
             fill: false,
-            borderColor: "rgb(255, 99, 71)",
+            borderColor: "#674636",
             tension: 0.1,
           },
         ],

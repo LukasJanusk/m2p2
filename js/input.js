@@ -3,10 +3,11 @@ import { Engine } from "./logic.js";
 import { preparePoem } from "./api.js";
 
 export class InputController {
-  constructor(timer, paragraphs, user) {
+  constructor(timer, paragraphs, user, settings) {
     this.timer = timer;
     this.paragraphs = paragraphs;
     this.user = user;
+    this.settings = settings;
     this.currentParagraph = paragraphs[0];
     this.index = 0;
     this.paragraphEnd = false;
@@ -50,9 +51,11 @@ export class InputController {
     this.paragraphEnd = false;
   }
   // Restarts current text test
-  restart(textField, statisticsField) {
+  restart(textField, statisticsField, realTimeInfo, resultsField) {
     textField.style.display = "";
     statisticsField.style.display = "none";
+    realTimeInfo.style.display = "";
+    resultsField.style.display = "none";
     this.index = 0;
     this.paragraphs.forEach((paragraph, i) => {
       paragraph.className = "";
@@ -71,14 +74,22 @@ export class InputController {
     this.timer.reset();
     this.user.wpm = 0;
     this.user.accuracy = 0;
-    //Reset user curent stats logic here?
   }
   // Gets new poem text and restarts
-  async reset(textField, accuracyField, wpmField, statisticsField) {
+  async reset(
+    textField,
+    accuracyField,
+    wpmField,
+    statisticsField,
+    realTimeInfo,
+    resultsField
+  ) {
     this.timer.reset();
+    resultsField.style.display = "none";
     accuracyField.innerHTML = "Accuracy: 0%";
     wpmField.innerHTML = "WPM: 0";
     textField.style.display = "";
+    realTimeInfo.style.display = "";
     statisticsField.style.display = "none";
     textField.innerHTML = `<input id="hidden-input" autofocus /><p> Loading new poem...</p>`;
     this.paragraphs = await preparePoem();
@@ -90,19 +101,28 @@ export class InputController {
     this.currentParagraph = this.paragraphs[this.index];
     this.initializeParagraphs();
   }
+  showResults(resultsField) {
+    resultsField.style.display = "block";
+    const wpmMessage = this.user.calculateWpmChange();
+    const accuracyMessage = this.user.calculateAccuracyChange();
+    resultsField.innerHTML = `<p>${wpmMessage}</p><p>${accuracyMessage}</p>`;
+  }
   // Checks if timer is up and saves user data on time up
-  async checkForEnd(textField, statisticsField) {
+  async checkForEnd(textField, statisticsField, realTimeInfo, results) {
     return new Promise((resolve) => {
       setInterval(() => {
         if (this.timer.remainingTime === 0 && this.timer.running) {
           this.timer.stop();
           const correctWords = this.engine.getCorrectWords(this.paragraphs);
           const accuracy = this.engine.calculateAccuracy(this.paragraphs);
-          const wpm = (correctWords / this.timer.duration) * 60;
+          const wpm = parseInt(
+            ((correctWords / this.timer.duration) * 60).toFixed(0)
+          );
           this.user.addWpmEntry(wpm);
           this.user.addAccuracyEntry(accuracy);
           this.showStatistics(textField, statisticsField);
-          resolve();
+          this.showResults(results);
+          realTimeInfo.style.display = "none";
         }
       }, 1);
     });
@@ -149,7 +169,8 @@ export class InputController {
     accuracyField,
     wpmField,
     statisticsField,
-    lineAutoComplete = false
+    realTimeInfo,
+    resultsField
   ) {
     if (this.paragraphs === null || this.currentParagraph === null) {
       return;
@@ -159,12 +180,13 @@ export class InputController {
     }
     if (
       this.paragraphEnd === true &&
-      lineAutoComplete === false &&
+      this.settings.autoComplete === false &&
       key !== "Enter" &&
       key !== "Backspace"
     ) {
-      this.renderer.playIncorrectSound();
-      // this.handleEnter();
+      if (this.settings.sound) {
+        this.renderer.playIncorrectSound();
+      }
       console.log("Press Enter or Backspace at line end!");
       return;
     } else if (key === "Backspace" && !this.timer.end) {
@@ -172,27 +194,47 @@ export class InputController {
         this.paragraphEnd = false;
       }
       if (
-        !this.renderer.handleBackspace(this.currentParagraph, this.paragraphs)
+        !this.renderer.handleBackspace(
+          this.currentParagraph,
+          this.paragraphs,
+          this.settings.sound
+        )
       ) {
         this.index--;
         this.currentParagraph = this.paragraphs[this.index];
       }
     } else if (key === "Enter" && this.timer.end) {
-      this.restart(textField, statisticsField);
-    } else if (key === "Enter" && this.paragraphEnd && !lineAutoComplete) {
+      this.restart(textField, statisticsField, realTimeInfo, resultsField);
+    } else if (
+      key === "Enter" &&
+      this.paragraphEnd &&
+      !this.settings.autoComplete
+    ) {
       this.handleEnter();
-      this.renderer.playCorrectSound();
+      if (this.settings.sound) {
+        this.renderer.playCorrectSound();
+      }
     } else if (key === "Escape" && this.timer.end) {
-      await this.reset(textField, accuracyField, wpmField, statisticsField);
+      await this.reset(
+        textField,
+        accuracyField,
+        wpmField,
+        statisticsField,
+        realTimeInfo,
+        resultsField
+      );
     } else if (key !== "Shift" && this.timer.running && !this.timer.end) {
-      this.renderer.renderLetter(key, this.currentParagraph);
+      this.renderer.renderLetter(
+        key,
+        this.currentParagraph,
+        this.settings.sound
+      );
       this.paragraphEnd = this.engine.checkForParagraphEnd(
         this.currentParagraph
       );
-      if (this.paragraphEnd && lineAutoComplete) {
+      if (this.paragraphEnd && this.settings.autoComplete) {
         this.handleEnter();
       }
-      // this.renderer.highlightCurrentWord(this.currentParagraph);
     }
     this.renderer.highlightCurrentWord(this.currentParagraph);
   }

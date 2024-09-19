@@ -2,6 +2,8 @@ import { preparePoem } from "./api.js";
 import { InputController } from "./input.js";
 import { Timer } from "./timer.js";
 import { User } from "./user.js";
+import { Settings } from "./settings.js";
+import { runToggles, loadButtons } from "./buttons.js";
 
 async function loadInitialPoem(textField) {
   textField.innerHTML = `<input id="hidden-input" autofocus /><p> Loading new poem...</p>`;
@@ -12,6 +14,11 @@ async function loadInitialPoem(textField) {
 async function handleLoading() {
   document.addEventListener("DOMContentLoaded", async () => {
     const user = new User();
+    const settings = new Settings();
+    const timer = new Timer(10);
+    const toggles = document.querySelectorAll(".toggle");
+    const theme = document.querySelector("#theme");
+    const resultsField = document.querySelector("#results");
     const timerDiv = document.querySelector("#timer");
     const realTimeInfo = document.querySelector("#realtime-info");
     const hiddenInput = document.querySelector("#hidden-input");
@@ -19,14 +26,14 @@ async function handleLoading() {
     const wpmField = document.getElementById("wpm");
     const accuracyField = document.getElementById("accuracy");
     const statisticsField = document.getElementById("statistics");
-    const timer = new Timer(60);
     const textField = document.getElementById("text-field");
+    loadButtons(settings, toggles);
     const poem = await loadInitialPoem(textField);
     if (!poem) {
       alert("Failed to fetch poem data, reload page to retry");
       return;
     }
-    const inputController = new InputController(timer, poem, user);
+    const inputController = new InputController(timer, poem, user, settings);
     poem.forEach((paragraph) => {
       textField.appendChild(paragraph);
     });
@@ -39,7 +46,8 @@ async function handleLoading() {
         accuracyField,
         wpmField,
         statisticsField,
-        false
+        realTimeInfo,
+        resultsField
       );
       inputController.handleAccuracy(accuracyField);
       inputController.handleWpm(wpmField);
@@ -49,10 +57,23 @@ async function handleLoading() {
         textField,
         accuracyField,
         wpmField,
-        statisticsField
+        statisticsField,
+        realTimeInfo,
+        resultsField
       );
     });
-    inputController.checkForEnd(textField, statisticsField);
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", (event) => {
+        const clickedElement = event.target;
+        runToggles(clickedElement, theme, settings);
+      });
+    });
+    inputController.checkForEnd(
+      textField,
+      statisticsField,
+      realTimeInfo,
+      resultsField
+    );
     inputController.timer.renderTimer(timerDiv);
     if (inputController.timer.remainingTime > 0) {
       inputController.updateWpm(wpmField);

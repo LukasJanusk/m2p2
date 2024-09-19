@@ -1,0 +1,74 @@
+body {
+  background-color: #fdf9ec;
+  color: black;
+}
+header {
+  background: linear-gradient(to top, #aab396, #f7eed3);
+  border-bottom: 1px solid gray;
+}
+#statistics {
+  background-color: #fffbef;
+  border: 1px solid gray;
+}
+footer {
+  background: linear-gradient(to bottom, #aab396, #f7eed3);
+  border-top: 1px solid gray;
+}
+#main {
+  background-color: #f7eed3; /* Beige */
+}
+#text-field {
+  background-color: #fffbef;
+  border: 1px solid gray;
+}
+
+/* Return 'current-word', 'correct', 'incorrect', 'current' to their original colors */
+.current-word {
+  background-color: #cdcccc; /* Darker gray for better contrast */
+}
+.correct {
+  background-color: #9cc49c; /* Darker, muted green */
+}
+.incorrect {
+  background-color: #c87979; /* Darker, muted red */
+}
+.current {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  animation: color-change 2s ease-in-out infinite;
+}
+
+/* Original color change animation */
+@keyframes color-change {
+  0% {
+    background-color: #9c9c9c; /* Darker gray */
+  }
+  50% {
+    background-color: #c4c4c4; /* Medium gray */
+  }
+  100% {
+    background-color: #9c9c9c; /* Darker gray */
+  }
+}
+/* Button styles using the new color palette */
+button {
+  background-color: #674636; /* Dark brown */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover state */
+button:hover {
+  background-color: #543c2e; /* Slightly darker brown */
+}
+
+/* Active (clicked) state */
+button:active {
+  background-color: #3e2d22; /* Darkest brown */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
