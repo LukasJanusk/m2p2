@@ -16,7 +16,7 @@ async function handleLoading() {
     const theme = document.querySelector("#theme");
     const user = new User();
     const settings = new Settings(theme);
-    const timer = new Timer(10);
+    const timer = new Timer(60);
     const toggles = document.querySelectorAll(".toggle");
     const resultsField = document.querySelector("#results");
     const timerDiv = document.querySelector("#timer");

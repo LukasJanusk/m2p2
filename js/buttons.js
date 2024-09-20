@@ -48,7 +48,7 @@ export function loadButtons(settings, toggles) {
     } else if (toggle.id === "theme-toggle") {
       toggle.innerText = settings.theme === "light" ? "Light" : "Dark";
     } else if (toggle.id === "lineBreak-toggle") {
-      toggle.innerText = settings.autoLineBreak
+      toggle.innerText = settings.autoComplete
         ? "Line Auto Break -- ON"
         : "Line Auto Break - OFF";
     }
