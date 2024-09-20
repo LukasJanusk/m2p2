@@ -49,7 +49,7 @@ export class User {
   // Calculates wpm improvement in percentage from the last attempt
   calculateWpmChange() {
     const currentWpm = this.wpmHistory[0]?.wpm;
-    const previousWpm = this.wpmHistory[1]?.wpm; // Should reference [1] for the previous value
+    const previousWpm = this.wpmHistory[1]?.wpm;
     if (previousWpm === undefined || currentWpm === undefined) {
       return "Could not calculate WPM change.";
     }
@@ -80,7 +80,7 @@ export class User {
     if (percentageChange > 0) {
       return `<strong>ACCURACY: ${currentAccuracy}%</strong> - You were <strong>${percentageChange.toFixed(
         0
-      )}%</strong> more accurate`;
+      )}%</strong> more accurate.`;
     } else if (percentageChange < 0) {
       return `<strong>ACCURACY: ${currentAccuracy}%</strong> - You were <strong>${Math.abs(
         percentageChange

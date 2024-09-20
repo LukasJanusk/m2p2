@@ -29,12 +29,22 @@
       </div>
       <div id="results" class="main-item"></div>
       <div id="text-field" class="main-item">
-        <input id="hidden-input" autofocus />
+        <input id="hidden-input" />
       </div>
       <div id="statistics" class="main-item">
         <canvas id="wpm-statistics" class="statistics-item"></canvas>
         <canvas id="accuracy-statistics" class="statistics-item"></canvas>
-        <button id="reset" class="statistics-item">Reset</button>
+        <div id="message" class="statistics-item">
+          Press 'Enter' to restart same test<br />Press 'Esc' to reset with new
+          text
+        </div>
+        <button
+          id="reset"
+          class="statistics-item"
+          title="Reset with a new text"
+        >
+          Reset
+        </button>
       </div>
     </div>
     <footer></footer>

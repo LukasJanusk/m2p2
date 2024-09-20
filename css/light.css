@@ -30,11 +30,6 @@ footer {
 .incorrect {
   background-color: #c87979;
 }
-.current {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  animation: color-change 2s ease-in-out infinite;
-}
 @keyframes color-change {
   0% {
     background-color: #9c9c9c;
@@ -45,6 +40,11 @@ footer {
   100% {
     background-color: #9c9c9c;
   }
+}
+.current {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  animation: color-change 2s ease-in-out infinite;
 }
 button {
   background-color: #674636;

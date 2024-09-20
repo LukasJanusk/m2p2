@@ -22,18 +22,6 @@ footer {
   background-color: rgb(60, 61, 55);
   border: 1px solid gray;
 }
-
-@keyframes color-change {
-  0% {
-    background-color: rgb(132, 134, 119);
-  }
-  50% {
-    background-color: rgb(83, 83, 77);
-  }
-  100% {
-    background-color: rgb(132, 134, 119);
-  }
-}
 button {
   background-color: #4a3125;
   color: white;
@@ -59,6 +47,17 @@ button:active {
 }
 .incorrect {
   background-color: rgb(100, 41, 41);
+}
+@keyframes color-change {
+  0% {
+    background-color: rgb(132, 134, 119);
+  }
+  50% {
+    background-color: rgb(83, 83, 77);
+  }
+  100% {
+    background-color: rgb(132, 134, 119);
+  }
 }
 .current {
   text-decoration: underline;

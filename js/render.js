@@ -181,14 +181,13 @@ export class Renderer {
           .map((item) => parseFloat(item[key]))
           .reverse()
       : [];
-
+    const maxValue = Math.max(...dataPoints);
     const dateLabels = user[historyKey]
       ? user[historyKey]
           .slice(0, 5)
           .map((item) => item["date"])
           .reverse()
       : [];
-
     ctx.chart = new Chart(ctx, {
       type: "line",
       data: {
@@ -207,6 +206,7 @@ export class Renderer {
         scales: {
           y: {
             beginAtZero: start,
+            max: maxValue,
           },
         },
         plugins: {
@@ -214,7 +214,7 @@ export class Renderer {
           datalabels: {
             align: "start", // Align labels at the end of the point
             anchor: "end", // Anchor labels to the top of each point
-            backgroundColor: "rgba(0, 0, 0, 0.7)", // Optional: Background color for label
+            backgroundColor: "rgba(88, 60, 46, 0.8)", // Optional: Background color for label
             borderRadius: 3,
             color: "white",
             font: {

@@ -30,7 +30,7 @@ function toggleLineBreak(settings, toggle) {
   }
   settings.save();
 }
-// Runs button click based on clicked button ID
+// Changes settings and button text based on clicked button ID
 export function runToggles(toggle, theme, settings) {
   if (toggle.id === "sound-toggle") {
     toggleSound(settings, toggle);
@@ -44,13 +44,13 @@ export function runToggles(toggle, theme, settings) {
 export function loadButtons(settings, toggles) {
   toggles.forEach((toggle) => {
     if (toggle.id === "sound-toggle") {
-      toggle.innerText = settings.sound ? "Sound -- ON" : "Sound -- OFF";
+      toggle.innerText = settings.sound ? "Sound -- ON" : "Sound - OFF";
     } else if (toggle.id === "theme-toggle") {
       toggle.innerText = settings.theme === "light" ? "Light" : "Dark";
     } else if (toggle.id === "lineBreak-toggle") {
       toggle.innerText = settings.autoLineBreak
         ? "Line Auto Break -- ON"
-        : "Line Auto Break -- OFF";
+        : "Line Auto Break - OFF";
     }
   });
 }

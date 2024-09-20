@@ -13,15 +13,14 @@ async function loadInitialPoem(textField) {
 }
 async function handleLoading() {
   document.addEventListener("DOMContentLoaded", async () => {
-    const user = new User();
-    const settings = new Settings();
-    const timer = new Timer(60);
-    const toggles = document.querySelectorAll(".toggle");
     const theme = document.querySelector("#theme");
+    const user = new User();
+    const settings = new Settings(theme);
+    const timer = new Timer(10);
+    const toggles = document.querySelectorAll(".toggle");
     const resultsField = document.querySelector("#results");
     const timerDiv = document.querySelector("#timer");
     const realTimeInfo = document.querySelector("#realtime-info");
-    const hiddenInput = document.querySelector("#hidden-input");
     const resetButton = document.querySelector("#reset");
     const wpmField = document.getElementById("wpm");
     const accuracyField = document.getElementById("accuracy");
@@ -38,8 +37,25 @@ async function handleLoading() {
       textField.appendChild(paragraph);
     });
     document.addEventListener("keydown", (event) => {
-      event.preventDefault();
-      inputController.focusInput(hiddenInput);
+      const keysToPrevent = [
+        "Tab",
+        "Enter",
+        "Backspace",
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "'",
+        "Space",
+        "/",
+      ];
+      if (
+        keysToPrevent.includes(event.key) ||
+        (event.ctrlKey && ["a", "z", "v", "y"].includes(event.key)) ||
+        event.code === "Space"
+      ) {
+        event.preventDefault();
+      }
       inputController.handleKeyPress(
         event.key,
         textField,

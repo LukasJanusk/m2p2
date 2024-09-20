@@ -108,7 +108,7 @@ export class InputController {
     resultsField.innerHTML = `<p>${wpmMessage}</p><p>${accuracyMessage}</p>`;
   }
   // Checks if timer is up and saves user data on time up
-  async checkForEnd(textField, statisticsField, realTimeInfo, results) {
+  async checkForEnd(textField, statisticsField, realTimeInfo, resultsField) {
     return new Promise((resolve) => {
       setInterval(() => {
         if (this.timer.remainingTime === 0 && this.timer.running) {
@@ -121,10 +121,10 @@ export class InputController {
           this.user.addWpmEntry(wpm);
           this.user.addAccuracyEntry(accuracy);
           this.showStatistics(textField, statisticsField);
-          this.showResults(results);
+          this.showResults(resultsField);
           realTimeInfo.style.display = "none";
         }
-      }, 1);
+      }, 10);
     });
   }
   // Shows statistics and hides textField

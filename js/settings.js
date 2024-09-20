@@ -1,9 +1,6 @@
 export class Settings {
-  constructor() {
-    // Default settings
-    // this.theme = "light";
-    // this.sound = true;
-    // this.autoComplete = false;
+  constructor(themeElement) {
+    this.themeElement = themeElement;
     this.load();
   }
 
@@ -21,6 +18,7 @@ export class Settings {
       this.sound = true;
       this.autoComplete = false;
     }
+    this.themeElement.href = `/css/${this.theme}.css`;
   }
   // Save settings to localStorage
   save() {
