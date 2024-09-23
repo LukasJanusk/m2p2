@@ -20,7 +20,7 @@ export class Renderer {
     if (spans.length > currentSpanIndex + 1)
       spans[currentSpanIndex + 1].className = "current";
   }
-  // Determines which class asign for a spans of paragraphs on Backspace click
+  // Asigns classes for spans of paragraphs on Backspace click
   handleBackspace(paragraph, paragraphs, sound) {
     const spans = Array.from(paragraph.querySelectorAll("span"));
     const currentSpan = paragraph.querySelector(".current");
@@ -210,24 +210,23 @@ export class Renderer {
           },
         },
         plugins: {
-          // Use the dataLabels plugin to display values above each point
           datalabels: {
-            align: "start", // Align labels at the end of the point
-            anchor: "end", // Anchor labels to the top of each point
-            backgroundColor: "rgba(88, 60, 46, 0.8)", // Optional: Background color for label
+            align: "start",
+            anchor: "end",
+            backgroundColor: "rgba(88, 60, 46, 0.8)",
             borderRadius: 3,
             color: "white",
             font: {
               weight: "bold",
             },
             formatter: function (value) {
-              return value.toFixed(1); // Format the label value
+              return value.toFixed(1);
             },
-            offset: 5, // Shift the label up or down to avoid overlap
+            offset: 5,
           },
         },
       },
-      plugins: [ChartDataLabels], // Include the dataLabels plugin
+      plugins: [ChartDataLabels],
     });
   }
   // Generates graphs for WPM and accuracy
